@@ -16,9 +16,11 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: { children: ReactNode }) => (
+  const Wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
 };
 
 describe('useRandomQuote', () => {
@@ -47,8 +49,13 @@ describe('useRandomQuote', () => {
   it('should handle errors gracefully', async () => {
     // Mock fetchRandomQuote to throw an error, but it will return fallback
     // So we check that the query completes (even with fallback)
-    const mockFallback = { id: 999, quote: 'Fallback', author: 'Fallback Author' };
-    vi.mocked(api.fetchRandomQuote).mockRejectedValueOnce(new Error('API Error'))
+    const mockFallback = {
+      id: 999,
+      quote: 'Fallback',
+      author: 'Fallback Author',
+    };
+    vi.mocked(api.fetchRandomQuote)
+      .mockRejectedValueOnce(new Error('API Error'))
       .mockResolvedValueOnce(mockFallback);
 
     const { result } = renderHook(() => useRandomQuote(), {
@@ -56,12 +63,14 @@ describe('useRandomQuote', () => {
     });
 
     // Wait for query to complete (will use fallback from api.ts)
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    }, { timeout: 3000 });
+    await waitFor(
+      () => {
+        expect(result.current.isLoading).toBe(false);
+      },
+      { timeout: 3000 }
+    );
 
     // The query should complete (either with error or fallback data)
     expect(result.current.isLoading).toBe(false);
   });
 });
-

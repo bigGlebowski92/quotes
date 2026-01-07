@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRandomQuote } from '../hooks/useRandomQuote';
 import { getRandomFallbackQuote } from '../lib/fallbackQuotes';
 import { Quote } from '../types/quote';
@@ -12,60 +12,60 @@ import {
 } from '../lib/quoteStorage';
 
 export function QuoteDisplay() {
-  const { data, isLoading, error, refetch, isFetching, isError } =
-    useRandomQuote();
-  const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
-  const [userRating, setUserRating] = useState<number | null>(null);
-  const [isFav, setIsFav] = useState(false);
-  const [isOffline, setIsOffline] = useState(false);
+  const { data, isLoading, refetch, isFetching, isError } = useRandomQuote();
+  const [isOffline, setIsOffline] = useState(() => !navigator.onLine);
+  const [fallbackQuote, setFallbackQuote] = useState<Quote | null>(() => {
+    if (typeof window !== 'undefined' && !navigator.onLine) {
+      return getRandomFallbackQuote();
+    }
+    return null;
+  });
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => setIsOffline(true);
+    const handleOffline = () => {
+      setIsOffline(true);
+      if (!fallbackQuote) {
+        setFallbackQuote(getRandomFallbackQuote());
+      }
+    };
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    setIsOffline(!navigator.onLine);
 
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
+  }, [fallbackQuote]);
 
-  useEffect(() => {
-    if (data) {
-      setCurrentQuote(data);
-      setUserRating(getQuoteRating(data.id));
-      setIsFav(isFavorite(data.id));
-    } else if (isError || isOffline) {
-      const fallbackQuote = getRandomFallbackQuote();
-      setCurrentQuote(fallbackQuote);
-      setUserRating(getQuoteRating(fallbackQuote.id));
-      setIsFav(isFavorite(fallbackQuote.id));
-    }
-  }, [data, isError, isOffline]);
+  const currentQuote = data || (isError || isOffline ? fallbackQuote : null);
+
+  const userRating = useMemo(
+    () => (currentQuote ? getQuoteRating(currentQuote.id) : null),
+    [currentQuote]
+  );
+
+  const isFav = useMemo(
+    () => (currentQuote ? isFavorite(currentQuote.id) : false),
+    [currentQuote]
+  );
 
   const handleRating = (rating: number) => {
     if (currentQuote) {
       saveQuoteRating(currentQuote, rating);
-      setUserRating(rating);
     }
   };
 
   const handleToggleFavorite = () => {
     if (currentQuote) {
-      const newFavState = toggleFavorite(currentQuote);
-      setIsFav(newFavState);
+      toggleFavorite(currentQuote);
     }
   };
 
   const handleNewQuote = () => {
     if (isOffline || isError) {
-      const fallbackQuote = getRandomFallbackQuote();
-      setCurrentQuote(fallbackQuote);
-      setUserRating(getQuoteRating(fallbackQuote.id));
-      setIsFav(isFavorite(fallbackQuote.id));
+      setFallbackQuote(getRandomFallbackQuote());
     } else {
       refetch();
     }
@@ -101,7 +101,7 @@ export function QuoteDisplay() {
     <div className="flex flex-col items-center gap-6 p-8">
       {(isOffline || isError) && (
         <div className="rounded-full bg-amber-100 px-4 py-2 text-sm font-medium text-amber-800 dark:bg-amber-900 dark:text-amber-200">
-          ⚠️ Offline - Showing fallback quote
+          Offline - Showing fallback quote
         </div>
       )}
 
@@ -124,7 +124,7 @@ export function QuoteDisplay() {
               <button
                 key={rating}
                 onClick={() => handleRating(rating)}
-                className={`text-2xl transition-transform hover:scale-110 ${
+                className={`text-2xl ${
                   userRating && userRating >= rating
                     ? 'text-yellow-400'
                     : 'text-zinc-300 dark:text-zinc-600'

@@ -9,7 +9,9 @@
     "lint": "eslint",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "test:ci": "vitest --run",
+    "ci": "npm run lint && npm run test:ci && npm run build"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.12",
@@ -27,6 +29,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/coverage-v8": "^4.0.16",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "jsdom": "^27.4.0",
