@@ -1,22 +1,30 @@
 # Quotes App
 
-A modern React application built with Next.js, TanStack Query, and TailwindCSS that displays random inspirational quotes. The app features offline support, quote rating, favorites, and comprehensive test coverage.
+A modern React application that displays random inspirational quotes with offline support, rating, and favorites functionality.
+
+**🌐 Live Demo:** [https://quotes-livid-xi.vercel.app/](https://quotes-livid-xi.vercel.app/)
+
+## What is this app?
+
+The Quotes App is a Next.js application that fetches and displays random inspirational quotes from the DummyJSON Quotes API. Users can rate quotes, save favorites, and continue using the app even when offline thanks to built-in fallback quotes.
+
+## How it works
+
+1. **Quote Fetching**: The app fetches random quotes from the [DummyJSON Quotes API](https://dummyjson.com/quotes)
+2. **Offline Support**: When the network is unavailable or the API fails, the app automatically falls back to 15 curated hardcoded quotes
+3. **User Interactions**: Users can rate quotes (1-5 stars) and save favorites, all stored locally in the browser
+4. **State Management**: TanStack Query handles data fetching, caching, and error states
+5. **Persistence**: Ratings and favorites are saved in localStorage and persist across sessions
 
 ## Features
 
-### ✅ Core Features
-
-- **Random Quote Display**: Fetches random quotes from the [DummyJSON Quotes API](https://dummyjson.com/quotes)
-- **Offline Support**: Gracefully handles network failures with hardcoded fallback quotes
-- **Quote Rating**: Rate quotes from 1-5 stars (stored in localStorage)
-- **Favorites**: Save favorite quotes for later (stored in localStorage)
-- **Responsive Design**: Beautiful UI built with TailwindCSS, works on all devices
-- **Dark Mode**: Automatic dark mode support
-
-### 🎨 User Stories Implemented
-
-1. ✅ **Offline Handling**: Falls back to 15 curated hardcoded quotes when offline or API fails
-2. ✅ **Quote Rating**: Users can rate quotes 1-5 stars, ratings persist in localStorage
+- ✅ **Random Quote Display**: Fetches random quotes from DummyJSON Quotes API
+- ✅ **Offline Support**: Gracefully handles network failures with 15 hardcoded fallback quotes
+- ✅ **Quote Rating**: Rate quotes from 1-5 stars (stored in localStorage)
+- ✅ **Favorites**: Save favorite quotes for later (stored in localStorage)
+- ✅ **Responsive Design**: Beautiful UI built with TailwindCSS, works on all devices
+- ✅ **Dark Mode**: Automatic dark mode support
+- ✅ **Network Detection**: Automatically detects offline status and shows visual indicator
 
 ## Tech Stack
 
@@ -26,6 +34,7 @@ A modern React application built with Next.js, TanStack Query, and TailwindCSS t
 - **Testing**: [Vitest](https://vitest.dev/) + [React Testing Library](https://testing-library.com/react)
 - **CI/CD**: [GitHub Actions](https://github.com/features/actions)
 - **Language**: TypeScript
+- **Deployment**: [Vercel](https://vercel.com/)
 
 ## Getting Started
 
@@ -66,6 +75,7 @@ npm run dev
 - `npm run test` - Run tests in watch mode
 - `npm run test:ui` - Run tests with UI
 - `npm run test:coverage` - Run tests with coverage report
+- `npm run ci` - Run all CI checks locally (lint + test + build)
 
 ## Project Structure
 
@@ -95,6 +105,8 @@ The project includes comprehensive unit tests covering:
 - LocalStorage utilities (ratings & favorites)
 - Custom hooks (TanStack Query integration)
 
+**17 tests** - All passing ✅
+
 Run tests:
 
 ```bash
@@ -111,37 +123,9 @@ npm run test:coverage
 
 The project uses GitHub Actions for continuous integration:
 
-### Workflows
-
-1. **CI Pipeline** (`.github/workflows/ci.yml`)
-
-   - Runs on every push and pull request
-   - Executes linting
-   - Runs all unit tests
-   - Builds the project to ensure it compiles
-   - Runs on Node.js 20.x
-
-2. **Test Coverage** (`.github/workflows/test-coverage.yml`)
-   - Generates coverage reports
-   - Uploads coverage to Codecov (optional)
-
-### Status Badges
-
-You can add these badges to your README (after first CI run):
-
-```markdown
-![CI](https://github.com/bigGlebowski92/quotes/workflows/CI/badge.svg)
-![Test Coverage](https://codecov.io/gh/bigGlebowski92/quotes/branch/main/graph/badge.svg)
-```
-
-### Local CI Simulation
-
-To test CI locally before pushing:
-
-```bash
-# Run all CI checks
-npm run lint && npm run test -- --run && npm run build
-```
+- **CI Pipeline**: Runs linting, tests, and build verification on every push
+- **Test Coverage**: Generates and tracks test coverage reports
+- **Automated**: All checks run automatically on push and pull requests
 
 ## Offline Support
 
@@ -168,37 +152,14 @@ The app handles offline scenarios gracefully:
 - Toggle favorite status on/off
 - Persists across browser sessions
 
-### Offline Mode
-
-- Automatically switches to fallback quotes when:
-  - Network is unavailable
-  - API request fails
-  - API returns error status
-- Fallback quotes are randomly selected from 15 curated quotes
-- All features (rating, favorites) work in offline mode
-
 ## Code Quality
 
-- **TypeScript**: Full type safety
-- **ESLint**: Code linting configured
-- **Modular Architecture**: Separation of concerns (types, hooks, components, API)
+- **TypeScript**: Full type safety throughout
+- **ESLint**: Code linting configured and passing
+- **Modular Architecture**: Clean separation of concerns
 - **Error Handling**: Comprehensive error handling and fallbacks
 - **Accessibility**: ARIA labels and semantic HTML
-
-## Development Setup
-
-1. Install dependencies: `npm install`
-2. Start dev server: `npm run dev`
-3. Run tests: `npm run test`
-4. Build for production: `npm run build`
-
-## Deployment
-
-The app can be deployed to any platform that supports Next.js:
-
-- **Vercel** (recommended): [Deploy Now](https://vercel.com/new)
-- **Netlify**: Connect your GitHub repository
-- **Docker**: Use the included Dockerfile (if added)
+- **Testing**: 17 unit tests with 100% pass rate
 
 ## API Used
 
@@ -207,27 +168,6 @@ The app can be deployed to any platform that supports Next.js:
   - No API key required
   - Free tier with rate limits
 
-## Future Enhancements
-
-Potential features to add:
-
-- Share quotes on social media
-- Quote slideshow/carousel
-- Multiple API racing (fetch from multiple sources, use fastest)
-- Quote history
-- Export favorites
-- Copy to clipboard
-
 ## License
 
 This project is open source and available under the MIT License.
-
-## Author
-
-Built as a coding assignment demonstrating:
-
-- Modern React patterns
-- State management with TanStack Query
-- Offline-first architecture
-- Comprehensive testing
-- Clean code structure
