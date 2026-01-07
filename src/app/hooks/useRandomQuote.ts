@@ -7,6 +7,12 @@ export const useRandomQuote = () => {
   return useQuery({
     queryKey: ['randomQuote'],
     queryFn: fetchRandomQuote,
+    retry: 1,
+    retryDelay: 1000,
+    throwOnError: false,
   });
 };
+
+
+
 

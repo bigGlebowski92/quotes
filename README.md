@@ -1,36 +1,184 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Quotes App
+
+A modern React application built with Next.js, TanStack Query, and TailwindCSS that displays random inspirational quotes. The app features offline support, quote rating, favorites, and comprehensive test coverage.
+
+## Features
+
+### ✅ Core Features
+- **Random Quote Display**: Fetches random quotes from the [DummyJSON Quotes API](https://dummyjson.com/quotes)
+- **Offline Support**: Gracefully handles network failures with hardcoded fallback quotes
+- **Quote Rating**: Rate quotes from 1-5 stars (stored in localStorage)
+- **Favorites**: Save favorite quotes for later (stored in localStorage)
+- **Responsive Design**: Beautiful UI built with TailwindCSS, works on all devices
+- **Dark Mode**: Automatic dark mode support
+
+### 🎨 User Stories Implemented
+1. ✅ **Offline Handling**: Falls back to 15 curated hardcoded quotes when offline or API fails
+2. ✅ **Quote Rating**: Users can rate quotes 1-5 stars, ratings persist in localStorage
+
+## Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Data Fetching**: [TanStack Query v5](https://tanstack.com/query)
+- **Styling**: [TailwindCSS v4](https://tailwindcss.com/)
+- **Testing**: [Vitest](https://vitest.dev/) + [React Testing Library](https://testing-library.com/react)
+- **Language**: TypeScript
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/bigGlebowski92/quotes.git
+cd quotes
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## Learn More
+## Available Scripts
 
-To learn more about Next.js, take a look at the following resources:
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run test` - Run tests in watch mode
+- `npm run test:ui` - Run tests with UI
+- `npm run test:coverage` - Run tests with coverage report
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/app/
+├── components/
+│   └── QuoteDisplay.tsx      # Main quote display component
+├── hooks/
+│   └── useRandomQuote.ts      # Custom hook for fetching quotes
+├── lib/
+│   ├── api.ts                 # API functions
+│   ├── fallbackQuotes.ts      # Hardcoded fallback quotes
+│   └── quoteStorage.ts        # localStorage utilities for ratings/favorites
+├── types/
+│   └── quote.ts               # TypeScript type definitions
+├── providers.tsx              # TanStack Query provider setup
+├── layout.tsx                 # Root layout
+└── page.tsx                   # Home page
+```
 
-## Deploy on Vercel
+## Testing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The project includes comprehensive unit tests covering:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- API functions (with fallback handling)
+- Fallback quotes functionality
+- LocalStorage utilities (ratings & favorites)
+- Custom hooks (TanStack Query integration)
+
+Run tests:
+```bash
+npm run test
+```
+
+Run tests with coverage:
+```bash
+npm run test:coverage
+```
+
+## Offline Support
+
+The app handles offline scenarios gracefully:
+
+1. **Network Detection**: Automatically detects when the device goes offline
+2. **Fallback Quotes**: Uses 15 curated hardcoded quotes when API is unavailable
+3. **Visual Indicator**: Shows "Offline - Showing fallback quote" badge
+4. **Seamless Experience**: Users can still rate and favorite quotes while offline
+
+## Features in Detail
+
+### Quote Rating
+- Click stars (1-5) to rate any quote
+- Ratings are saved in localStorage
+- Ratings persist across sessions
+- Each quote can have one rating (updates on re-rating)
+
+### Favorites
+- Click the "Favorite" button to save quotes
+- Favorites are stored in localStorage
+- Toggle favorite status on/off
+- Persists across browser sessions
+
+### Offline Mode
+- Automatically switches to fallback quotes when:
+  - Network is unavailable
+  - API request fails
+  - API returns error status
+- Fallback quotes are randomly selected from 15 curated quotes
+- All features (rating, favorites) work in offline mode
+
+## Code Quality
+
+- **TypeScript**: Full type safety
+- **ESLint**: Code linting configured
+- **Modular Architecture**: Separation of concerns (types, hooks, components, API)
+- **Error Handling**: Comprehensive error handling and fallbacks
+- **Accessibility**: ARIA labels and semantic HTML
+
+## Development Setup
+
+1. Install dependencies: `npm install`
+2. Start dev server: `npm run dev`
+3. Run tests: `npm run test`
+4. Build for production: `npm run build`
+
+## Deployment
+
+The app can be deployed to any platform that supports Next.js:
+
+- **Vercel** (recommended): [Deploy Now](https://vercel.com/new)
+- **Netlify**: Connect your GitHub repository
+- **Docker**: Use the included Dockerfile (if added)
+
+## API Used
+
+- **DummyJSON Quotes API**: https://dummyjson.com/quotes
+  - Returns 30 random quotes per request
+  - No API key required
+  - Free tier with rate limits
+
+## Future Enhancements
+
+Potential features to add:
+- Share quotes on social media
+- Quote slideshow/carousel
+- Multiple API racing (fetch from multiple sources, use fastest)
+- Quote history
+- Export favorites
+- Copy to clipboard
+
+## License
+
+This project is open source and available under the MIT License.
+
+## Author
+
+Built as a coding assignment demonstrating:
+- Modern React patterns
+- State management with TanStack Query
+- Offline-first architecture
+- Comprehensive testing
+- Clean code structure

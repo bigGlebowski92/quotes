@@ -1,12 +1,18 @@
 import { Quote, QuotesResponse } from '../types/quote';
+import { getRandomFallbackQuote } from './fallbackQuotes';
 
 export const fetchRandomQuote = async (): Promise<Quote> => {
-  const response = await fetch('https://dummyjson.com/quotes');
-  if (!response.ok) {
-    throw new Error('Failed to fetch quotes');
-  }
-  const data: QuotesResponse = await response.json();
+  try {
+    const response = await fetch('https://dummyjson.com/quotes');
+    if (!response.ok) {
+      throw new Error('Failed to fetch quotes');
+    }
+    const data: QuotesResponse = await response.json();
 
-  const randomIndex = Math.floor(Math.random() * data.quotes.length);
-  return data.quotes[randomIndex];
+    const randomIndex = Math.floor(Math.random() * data.quotes.length);
+    return data.quotes[randomIndex];
+  } catch (error) {
+    // Fallback to hardcoded quotes when offline or API fails
+    return getRandomFallbackQuote();
+  }
 };
