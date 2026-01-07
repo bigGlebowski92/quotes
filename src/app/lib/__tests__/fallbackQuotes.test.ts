@@ -39,7 +39,6 @@ describe('fallbackQuotes', () => {
     for (let i = 0; i < 50; i++) {
       quotes.add(getRandomFallbackQuote().id);
     }
-    // With 15 quotes, after 50 calls we should have multiple different quotes
     expect(quotes.size).toBeGreaterThan(1);
   });
 });

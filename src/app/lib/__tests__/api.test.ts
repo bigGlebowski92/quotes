@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { fetchRandomQuote } from '../api';
 import { getRandomFallbackQuote } from '../fallbackQuotes';
 
-// Mock the fallback quotes
 vi.mock('../fallbackQuotes', () => ({
   getRandomFallbackQuote: vi.fn(() => ({
     id: 999,
@@ -28,7 +27,10 @@ describe('fetchRandomQuote', () => {
     };
 
     const mockResponse = {
-      quotes: [mockQuote, { id: 2, quote: 'Another quote', author: 'Another Author' }],
+      quotes: [
+        mockQuote,
+        { id: 2, quote: 'Another quote', author: 'Another Author' },
+      ],
       total: 2,
       skip: 0,
       limit: 30,
@@ -50,9 +52,7 @@ describe('fetchRandomQuote', () => {
   });
 
   it('should return fallback quote when API fails', async () => {
-    global.fetch = vi.fn(() =>
-      Promise.reject(new Error('Network error'))
-    );
+    global.fetch = vi.fn(() => Promise.reject(new Error('Network error')));
 
     const result = await fetchRandomQuote();
 
@@ -82,4 +82,3 @@ describe('fetchRandomQuote', () => {
     expect(getRandomFallbackQuote).toHaveBeenCalled();
   });
 });
-

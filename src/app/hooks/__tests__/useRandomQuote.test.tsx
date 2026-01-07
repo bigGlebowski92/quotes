@@ -47,8 +47,6 @@ describe('useRandomQuote', () => {
   });
 
   it('should handle errors gracefully', async () => {
-    // Mock fetchRandomQuote to throw an error, but it will return fallback
-    // So we check that the query completes (even with fallback)
     const mockFallback = {
       id: 999,
       quote: 'Fallback',
@@ -62,7 +60,6 @@ describe('useRandomQuote', () => {
       wrapper: createWrapper(),
     });
 
-    // Wait for query to complete (will use fallback from api.ts)
     await waitFor(
       () => {
         expect(result.current.isLoading).toBe(false);
@@ -70,7 +67,6 @@ describe('useRandomQuote', () => {
       { timeout: 3000 }
     );
 
-    // The query should complete (either with error or fallback data)
     expect(result.current.isLoading).toBe(false);
   });
 });

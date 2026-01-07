@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRandomQuote } from '../hooks/useRandomQuote';
-import { getRandomFallbackQuote } from '../lib/fallbackQuotes';
-import { Quote } from '../types/quote';
 import {
   saveQuoteRating,
   getQuoteRating,
@@ -12,34 +10,9 @@ import {
 } from '../lib/quoteStorage';
 
 export function QuoteDisplay() {
-  const { data, isLoading, refetch, isFetching, isError } = useRandomQuote();
-  const [isOffline, setIsOffline] = useState(() => !navigator.onLine);
-  const [fallbackQuote, setFallbackQuote] = useState<Quote | null>(() => {
-    if (typeof window !== 'undefined' && !navigator.onLine) {
-      return getRandomFallbackQuote();
-    }
-    return null;
-  });
+  const { data, isLoading, refetch, isFetching } = useRandomQuote();
 
-  useEffect(() => {
-    const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => {
-      setIsOffline(true);
-      if (!fallbackQuote) {
-        setFallbackQuote(getRandomFallbackQuote());
-      }
-    };
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, [fallbackQuote]);
-
-  const currentQuote = data || (isError || isOffline ? fallbackQuote : null);
+  const currentQuote = data;
 
   const userRating = useMemo(
     () => (currentQuote ? getQuoteRating(currentQuote.id) : null),
@@ -64,11 +37,7 @@ export function QuoteDisplay() {
   };
 
   const handleNewQuote = () => {
-    if (isOffline || isError) {
-      setFallbackQuote(getRandomFallbackQuote());
-    } else {
-      refetch();
-    }
+    refetch();
   };
 
   if (isLoading && !currentQuote) {
@@ -99,12 +68,6 @@ export function QuoteDisplay() {
 
   return (
     <div className="flex flex-col items-center gap-6 p-8">
-      {(isOffline || isError) && (
-        <div className="rounded-full bg-amber-100 px-4 py-2 text-sm font-medium text-amber-800 dark:bg-amber-900 dark:text-amber-200">
-          Offline - Showing fallback quote
-        </div>
-      )}
-
       <div className="max-w-2xl rounded-lg border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
         <blockquote className="text-xl font-medium leading-relaxed text-zinc-900 dark:text-zinc-100">
           &ldquo;{currentQuote.quote}&rdquo;
