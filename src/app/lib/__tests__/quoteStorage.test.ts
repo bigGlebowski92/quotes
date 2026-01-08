@@ -2,18 +2,10 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   saveQuoteRating,
   getQuoteRating,
-  getQuoteRatings,
   toggleFavorite,
   isFavorite,
   getFavorites,
 } from '../quoteStorage';
-import { Quote } from '../../types/quote';
-
-const mockQuote: Quote = {
-  id: 1,
-  quote: 'Test quote',
-  author: 'Test Author',
-};
 
 describe('quoteStorage', () => {
   beforeEach(() => {
@@ -25,15 +17,15 @@ describe('quoteStorage', () => {
 
   describe('Rating functions', () => {
     it('should save and retrieve a quote rating', () => {
-      saveQuoteRating(mockQuote, 5);
-      const rating = getQuoteRating(mockQuote.id);
+      saveQuoteRating(1, 5);
+      const rating = getQuoteRating(1);
       expect(rating).toBe(5);
     });
 
     it('should update existing rating', () => {
-      saveQuoteRating(mockQuote, 3);
-      saveQuoteRating(mockQuote, 5);
-      const rating = getQuoteRating(mockQuote.id);
+      saveQuoteRating(1, 3);
+      saveQuoteRating(1, 5);
+      const rating = getQuoteRating(1);
       expect(rating).toBe(5);
     });
 
@@ -42,33 +34,32 @@ describe('quoteStorage', () => {
       expect(rating).toBeNull();
     });
 
-    it('should return all ratings', () => {
-      saveQuoteRating(mockQuote, 5);
-      saveQuoteRating({ ...mockQuote, id: 2 }, 4);
-      const ratings = getQuoteRatings();
-      expect(ratings.length).toBe(2);
-      expect(ratings[0].quoteId).toBe(1);
-      expect(ratings[0].rating).toBe(5);
+    it('should handle multiple ratings', () => {
+      saveQuoteRating(1, 5);
+      saveQuoteRating(2, 4);
+      expect(getQuoteRating(1)).toBe(5);
+      expect(getQuoteRating(2)).toBe(4);
     });
   });
 
   describe('Favorite functions', () => {
     it('should toggle favorite status', () => {
-      const wasAdded = toggleFavorite(mockQuote);
+      const wasAdded = toggleFavorite(1);
       expect(wasAdded).toBe(true);
-      expect(isFavorite(mockQuote.id)).toBe(true);
+      expect(isFavorite(1)).toBe(true);
 
-      const wasRemoved = toggleFavorite(mockQuote);
+      const wasRemoved = toggleFavorite(1);
       expect(wasRemoved).toBe(false);
-      expect(isFavorite(mockQuote.id)).toBe(false);
+      expect(isFavorite(1)).toBe(false);
     });
 
     it('should return all favorites', () => {
-      toggleFavorite(mockQuote);
-      toggleFavorite({ ...mockQuote, id: 2 });
+      toggleFavorite(1);
+      toggleFavorite(2);
       const favorites = getFavorites();
       expect(favorites.length).toBe(2);
-      expect(favorites[0].id).toBe(1);
+      expect(favorites).toContain(1);
+      expect(favorites).toContain(2);
     });
 
     it('should handle localStorage errors gracefully', () => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState } from 'react';
 import { useRandomQuote } from '../hooks/useRandomQuote';
 import {
   saveQuoteRating,
@@ -10,29 +10,30 @@ import {
 } from '../lib/quoteStorage';
 
 export function QuoteDisplay() {
-  const { data, isLoading, refetch, isFetching } = useRandomQuote();
+  const {
+    data: currentQuote,
+    isLoading,
+    refetch,
+    isFetching,
+  } = useRandomQuote();
 
-  const currentQuote = data;
+  // Use state only to trigger re-renders when we update localStorage
+  const [, setUpdateTrigger] = useState(0);
 
-  const userRating = useMemo(
-    () => (currentQuote ? getQuoteRating(currentQuote.id) : null),
-    [currentQuote]
-  );
+  const rating = currentQuote ? getQuoteRating(currentQuote.id) : null;
+  const isFav = currentQuote ? isFavorite(currentQuote.id) : false;
 
-  const isFav = useMemo(
-    () => (currentQuote ? isFavorite(currentQuote.id) : false),
-    [currentQuote]
-  );
-
-  const handleRating = (rating: number) => {
+  const handleRating = (newRating: number) => {
     if (currentQuote) {
-      saveQuoteRating(currentQuote, rating);
+      saveQuoteRating(currentQuote.id, newRating);
+      setUpdateTrigger((prev) => prev + 1);
     }
   };
 
   const handleToggleFavorite = () => {
     if (currentQuote) {
-      toggleFavorite(currentQuote);
+      toggleFavorite(currentQuote.id);
+      setUpdateTrigger((prev) => prev + 1);
     }
   };
 
@@ -83,24 +84,24 @@ export function QuoteDisplay() {
             Rate this quote:
           </span>
           <div className="flex gap-1">
-            {[1, 2, 3, 4, 5].map((rating) => (
+            {[1, 2, 3, 4, 5].map((starRating) => (
               <button
-                key={rating}
-                onClick={() => handleRating(rating)}
+                key={starRating}
+                onClick={() => handleRating(starRating)}
                 className={`text-2xl ${
-                  userRating && userRating >= rating
+                  rating && rating >= starRating
                     ? 'text-yellow-400'
                     : 'text-zinc-300 dark:text-zinc-600'
                 }`}
-                aria-label={`Rate ${rating} stars`}
+                aria-label={`Rate ${starRating} stars`}
               >
                 ★
               </button>
             ))}
           </div>
-          {userRating && (
+          {rating && (
             <span className="text-sm text-zinc-600 dark:text-zinc-400">
-              ({userRating}/5)
+              ({rating}/5)
             </span>
           )}
         </div>
