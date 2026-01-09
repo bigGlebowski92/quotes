@@ -18,15 +18,16 @@ export function QuoteDisplay() {
     isFetching,
   } = useRandomQuote(quoteKey);
 
-  // Use state only to trigger re-renders when we update localStorage
   const [, setUpdateTrigger] = useState(0);
 
-  // Determine which quote to display (API quote or fallback)
   const displayQuote = useMemo(() => {
     if (currentQuote) return currentQuote;
-    if (!isLoading && !isFetching) return getRandomFallbackQuote();
+    if (!isLoading && !isFetching) {
+      return getRandomFallbackQuote();
+    }
     return null;
-  }, [currentQuote, isLoading, isFetching]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentQuote, isLoading, isFetching, quoteKey]);
 
   const rating = displayQuote ? getQuoteRating(displayQuote.id) : null;
   const isFav = displayQuote ? isFavorite(displayQuote.id) : false;
@@ -49,7 +50,6 @@ export function QuoteDisplay() {
     setQuoteKey((prev) => prev + 1);
   };
 
-  // Show loading only on initial load
   if (isLoading && !displayQuote && quoteKey === 0) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -60,7 +60,6 @@ export function QuoteDisplay() {
     );
   }
 
-  // Type guard - if we get here without a quote, show loading
   if (!displayQuote) {
     return (
       <div className="flex items-center justify-center p-8">
