@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRandomQuote } from '../hooks/useRandomQuote';
 import {
   saveQuoteRating,
@@ -8,6 +8,7 @@ import {
   toggleFavorite,
   isFavorite,
 } from '../lib/quoteStorage';
+import { getRandomFallbackQuote } from '../lib/fallbackQuotes';
 
 export function QuoteDisplay() {
   const [quoteKey, setQuoteKey] = useState(0);
@@ -20,30 +21,36 @@ export function QuoteDisplay() {
   // Use state only to trigger re-renders when we update localStorage
   const [, setUpdateTrigger] = useState(0);
 
-  const rating = currentQuote ? getQuoteRating(currentQuote.id) : null;
-  const isFav = currentQuote ? isFavorite(currentQuote.id) : false;
+  // Determine which quote to display (API quote or fallback)
+  const displayQuote = useMemo(() => {
+    if (currentQuote) return currentQuote;
+    if (!isLoading && !isFetching) return getRandomFallbackQuote();
+    return null;
+  }, [currentQuote, isLoading, isFetching]);
+
+  const rating = displayQuote ? getQuoteRating(displayQuote.id) : null;
+  const isFav = displayQuote ? isFavorite(displayQuote.id) : false;
 
   const handleRating = (newRating: number) => {
-    if (currentQuote) {
-      saveQuoteRating(currentQuote.id, newRating);
+    if (displayQuote) {
+      saveQuoteRating(displayQuote.id, newRating);
       setUpdateTrigger((prev) => prev + 1);
     }
   };
 
   const handleToggleFavorite = () => {
-    if (currentQuote) {
-      toggleFavorite(currentQuote.id);
+    if (displayQuote) {
+      toggleFavorite(displayQuote.id);
       setUpdateTrigger((prev) => prev + 1);
     }
   };
 
   const handleNewQuote = () => {
-    // Change query key to force a new fetch (works offline too)
     setQuoteKey((prev) => prev + 1);
   };
 
   // Show loading only on initial load
-  if (isLoading && !currentQuote && quoteKey === 0) {
+  if (isLoading && !displayQuote && quoteKey === 0) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-lg text-zinc-600 dark:text-zinc-400">
@@ -53,25 +60,8 @@ export function QuoteDisplay() {
     );
   }
 
-  // If no quote and not loading, show error but still allow retry
-  if (!currentQuote && !isLoading && !isFetching) {
-    return (
-      <div className="flex flex-col items-center gap-4 p-8">
-        <div className="text-lg text-red-600 dark:text-red-400">
-          Unable to load quotes
-        </div>
-        <button
-          onClick={handleNewQuote}
-          className="rounded-full bg-zinc-900 px-6 py-2 text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
   // Type guard - if we get here without a quote, show loading
-  if (!currentQuote) {
+  if (!displayQuote) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-lg text-zinc-600 dark:text-zinc-400">
@@ -85,10 +75,10 @@ export function QuoteDisplay() {
     <div className="flex flex-col items-center gap-6 p-8">
       <div className="max-w-2xl rounded-lg border border-zinc-200 bg-white p-8 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
         <blockquote className="text-xl font-medium leading-relaxed text-zinc-900 dark:text-zinc-100">
-          &ldquo;{currentQuote.quote}&rdquo;
+          &ldquo;{displayQuote.quote}&rdquo;
         </blockquote>
         <cite className="mt-4 block text-right text-sm font-semibold text-zinc-600 dark:text-zinc-400">
-          — {currentQuote.author}
+          — {displayQuote.author}
         </cite>
       </div>
 
