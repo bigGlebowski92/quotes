@@ -10,12 +10,12 @@ import {
 } from '../lib/quoteStorage';
 
 export function QuoteDisplay() {
+  const [quoteKey, setQuoteKey] = useState(0);
   const {
     data: currentQuote,
     isLoading,
-    refetch,
     isFetching,
-  } = useRandomQuote();
+  } = useRandomQuote(quoteKey);
 
   // Use state only to trigger re-renders when we update localStorage
   const [, setUpdateTrigger] = useState(0);
@@ -37,9 +37,9 @@ export function QuoteDisplay() {
     }
   };
 
-  const handleNewQuote = async () => {
-    // Force refetch even when offline - will get fallback quotes
-    await refetch({ throwOnError: false, cancelRefetch: false });
+  const handleNewQuote = () => {
+    // Change query key to force a new fetch (works offline too)
+    setQuoteKey((prev) => prev + 1);
   };
 
   if (isLoading && !currentQuote) {
