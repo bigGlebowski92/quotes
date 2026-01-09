@@ -42,7 +42,8 @@ export function QuoteDisplay() {
     setQuoteKey((prev) => prev + 1);
   };
 
-  if (isLoading && !currentQuote) {
+  // Show loading only on initial load
+  if (isLoading && !currentQuote && quoteKey === 0) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-lg text-zinc-600 dark:text-zinc-400">
@@ -52,7 +53,8 @@ export function QuoteDisplay() {
     );
   }
 
-  if (!currentQuote) {
+  // If no quote and not loading, show error but still allow retry
+  if (!currentQuote && !isLoading && !isFetching) {
     return (
       <div className="flex flex-col items-center gap-4 p-8">
         <div className="text-lg text-red-600 dark:text-red-400">
@@ -64,6 +66,17 @@ export function QuoteDisplay() {
         >
           Try Again
         </button>
+      </div>
+    );
+  }
+
+  // Type guard - if we get here without a quote, show loading
+  if (!currentQuote) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-lg text-zinc-600 dark:text-zinc-400">
+          Loading quote...
+        </div>
       </div>
     );
   }
