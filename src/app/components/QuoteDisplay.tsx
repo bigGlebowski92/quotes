@@ -38,6 +38,7 @@ export function QuoteDisplay() {
   };
 
   const handleNewQuote = () => {
+    console.log('handleNewQuote');
     refetch();
   };
 
