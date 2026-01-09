@@ -21,7 +21,7 @@ export const fetchRandomQuote = async (): Promise<Quote> => {
     const randomIndex = Math.floor(Math.random() * data.quotes.length);
     return data.quotes[randomIndex];
   } catch {
-    // Always return a fallback quote when offline or on error
+    // Always return fallback quote when offline or on error
     return getRandomFallbackQuote();
   }
 };

@@ -37,9 +37,9 @@ export function QuoteDisplay() {
     }
   };
 
-  const handleNewQuote = () => {
-    console.log('handleNewQuote');
-    refetch();
+  const handleNewQuote = async () => {
+    // Force refetch even when offline - will get fallback quotes
+    await refetch({ throwOnError: false, cancelRefetch: false });
   };
 
   if (isLoading && !currentQuote) {
