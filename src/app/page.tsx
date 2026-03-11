@@ -2,8 +2,8 @@ import { QuoteDisplay } from './components/QuoteDisplay';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex w-full max-w-4xl flex-col items-center gap-8 py-16 px-4 sm:px-8">
+    <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
+      <main className="mx-auto flex w-full max-w-4xl flex-col items-center gap-8 px-4 py-16 sm:px-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-5xl">
             Random Quotes
