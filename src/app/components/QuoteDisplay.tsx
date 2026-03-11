@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useRandomQuote } from '../hooks/useRandomQuote';
 import {
   saveQuoteRating,
@@ -8,7 +8,6 @@ import {
   toggleFavorite,
   isFavorite,
 } from '../lib/quoteStorage';
-import { getRandomFallbackQuote } from '../lib/fallbackQuotes';
 import { QuoteBlock } from './QuoteBlock';
 import { QuoteRating } from './QuoteRating';
 import { FavoriteButton } from './FavoriteButton';
@@ -25,11 +24,7 @@ export function QuoteDisplay() {
     isFetching,
   } = useRandomQuote(quoteKey);
 
-  const displayQuote = useMemo(() => {
-    if (currentQuote) return currentQuote;
-    if (!isLoading && !isFetching) return getRandomFallbackQuote();
-    return null;
-  }, [currentQuote, isLoading, isFetching]);
+  const displayQuote = currentQuote ?? null;
 
   const rating = displayQuote ? getQuoteRating(displayQuote.id) : null;
   const isFav = displayQuote ? isFavorite(displayQuote.id) : false;
