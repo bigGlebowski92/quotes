@@ -7,6 +7,7 @@ export const useRandomQuote = (key: number = 0) => {
   return useQuery({
     queryKey: ['randomQuote', key],
     queryFn: fetchRandomQuote,
+    networkMode: 'always',
     retry: 1,
     throwOnError: false,
   });
